@@ -1,0 +1,65 @@
+{
+    "name": "weboccult/laravel-aws-cloud-watch-logger",
+    "description": "This package is capable to log all your activities and SQL queries to AWS Cloud Watch.",
+    "keywords": [
+        "weboccult",
+        "laravel-aws-cloud-watch-logger"
+    ],
+    "homepage": "https://github.com/weboccult/laravel-aws-cloud-watch-logger",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Darshit Hedpara",
+            "email": "weboccult@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "aws/aws-sdk-php": "^3.190",
+        "illuminate/console": "^8.0",
+        "illuminate/contracts": "^8.0",
+        "illuminate/database": "^8.0",
+        "illuminate/http": "^8.0",
+        "illuminate/support": "^8.0",
+        "maxbanton/cwh": "^2.0",
+        "monolog/monolog": "^2.3",
+        "nunomaduro/collision": "^5.3",
+        "pestphp/pest": "^1.15",
+        "phpunit/phpunit": "^9.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Weboccult\\LaravelAwsCloudWatchLogger\\": "src"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Weboccult\\LaravelAwsCloudWatchLogger\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Weboccult\\LaravelAwsCloudWatchLogger\\LaravelAwsCloudWatchLoggerServiceProvider"
+            ],
+            "aliases": {
+                "LaravelAwsCloudWatchLogger": "Weboccult\\LaravelAwsCloudWatchLogger\\Facades\\LaravelAwsCloudWatchLogger"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
