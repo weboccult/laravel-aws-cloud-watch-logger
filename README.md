@@ -35,6 +35,8 @@ composer require weboccult/laravel-aws-cloud-watch-logger
 You can publish the config file with:
 ```bash
 php artisan vendor:publish --provider="Weboccult\LaravelAwsCloudwatchLogger\LaravelAwsCloudwatchLoggerServiceProvider" --tag="laravel-aws-cloud-watch-logger-config"
+or
+php artisan cloudwatch:publish
 ```
 
 This is the contents of the published config file:
