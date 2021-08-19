@@ -23,6 +23,8 @@ You can publish the config file with:
 
 ```bash
 php artisan vendor:publish --provider="Weboccult\LaravelAwsCloudwatchLogger\LaravelAwsCloudwatchLoggerServiceProvider" --tag="laravel-aws-cloud-watch-logger-config"
+or
+php artisan cloudwatch:publish
 ```
 or
 
