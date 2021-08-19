@@ -183,6 +183,15 @@ laravelAwsCloudwatchLogger()->setStore($store)
                             ->info();
 ```
 
+You can change the log driver at runtime:
+
+```php
+laravelAwsCloudwatchLogger()->via('file') // <=== using via() method (available drivers [ file, cloudwatch] )
+                            ->...
+                            ->...
+                            ->info();
+```
+
 ## Testing
 
 ```bash

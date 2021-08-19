@@ -2,7 +2,7 @@
 if (!function_exists('laravelAwsCloudWatchLogger')) {
     /**
      * Access laravelAwsCloudwatchLogger through helper.
-     * @return Weboccult\LaravelAwsCloudWatchLogger\LaravelAwsCloudWatchLogger
+     * @return Weboccult\LaravelAwsCloudWatchLogger\Facades\LaravelAwsCloudWatchLogger
      */
     function laravelAwsCloudwatchLogger()
     {

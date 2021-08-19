@@ -32,5 +32,5 @@ abstract class Driver
      */
     abstract public function __construct(array $settings, array $options, array $tags);
 
-    abstract public function dispatch(string $type, string $title);
+    abstract public function dispatch(string $type, string $title): void;
 }

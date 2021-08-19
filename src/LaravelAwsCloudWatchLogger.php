@@ -2,9 +2,9 @@
 
 namespace Weboccult\LaravelAwsCloudWatchLogger;
 
-use Weboccult\LaravelAwsCloudWatchLogger\Contracts\Driver;
 use Weboccult\LaravelAwsCloudWatchLogger\Traits\Checkable;
 use Weboccult\LaravelAwsCloudWatchLogger\Traits\Dispatchers;
+use Weboccult\LaravelAwsCloudWatchLogger\Traits\Validators;
 use Weboccult\LaravelAwsCloudWatchLogger\Types\Modules;
 use Weboccult\LaravelAwsCloudWatchLogger\Types\Operations;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,7 @@ use ReflectionClass;
 
 class LaravelAwsCloudWatchLogger
 {
-    use Checkable, Dispatchers;
+    use Checkable, Validators, Dispatchers;
 
     protected array $config;
 
@@ -48,19 +48,6 @@ class LaravelAwsCloudWatchLogger
         $this->driver = $driver;
         $this->settings = $this->config['drivers'][$driver];
         return $this;
-    }
-
-    protected function validateDriver()
-    {
-        $conditions = [
-            'Driver not selected or default driver does not exist.'                             => empty($this->driver),
-            'Driver not found or not properly mapped in config file. Try updating the package.' => !isset ($this->config['drivers'][$this->driver]) || empty($this->config['drivers'][$this->driver]) || !isset($this->config['map'][$this->driver]) || empty($this->config['map'][$this->driver]),
-            'Driver source not found. Please update the package.'                               => isset($this->config['map'][$this->driver]) && !class_exists($this->config['map'][$this->driver]),
-            'Driver must be an instance of Contracts\Driver.'                                   => isset ($this->config['map'][$this->driver]) && !(new ReflectionClass($this->config['map'][$this->driver]))->isSubclassOf(Driver::class),
-        ];
-        foreach ($conditions as $ex => $condition) {
-            throw_if($condition, new \Exception($ex));
-        }
     }
 
     /**
@@ -132,10 +119,10 @@ class LaravelAwsCloudWatchLogger
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @return $this
      */
-    public function setData($data): LaravelAwsCloudWatchLogger
+    public function setData(array $data): LaravelAwsCloudWatchLogger
     {
         $this->validatePayload($data);
         return $this;
@@ -187,21 +174,6 @@ class LaravelAwsCloudWatchLogger
         $constName = array_flip($reflect->getConstants())[$operation];
         $this->operation = $reflect->getConstant($constName);
         return $this;
-    }
-
-    public function validatePayload(array $data): bool
-    {
-        if (empty($data)) {
-            return false;
-        }
-        $conditions = [
-            'store is required.!' => empty($this->store),
-        ];
-        foreach ($conditions as $ex => $condition) {
-            throw_if($condition, new \Exception($ex));
-        }
-        $this->data = $data;
-        return true;
     }
 
     /**

@@ -14,10 +14,11 @@ class CloudWatchConfigPublishCommand extends Command
     {
         if (file_exists(config_path('cloudwatch.php'))) {
             $this->error('cloudwatch.php is already exist. config file publish failed.!');
-            /*$answer = $this->ask('Are you sure you want to replace the cloudwatch config file ? [y/N]', 'N');
+            $answer = $this->ask('Are you sure you want to replace the cloudwatch config file ? [y/N]', 'N');
             if ($answer == 'y' || $answer == 'Y') {
-                $this->call('vendor:publish', ['--tag' => "cloudwatch-config"]);
-            }*/
+                copy(__DIR__ . '/../../config/cloudwatch.php', config_path('cloudwatch.php'));
+                $this->info('Config file published successfully.!');
+            }
             return;
         }
         $this->call('vendor:publish', ['--tag' => "cloudwatch-config"]);

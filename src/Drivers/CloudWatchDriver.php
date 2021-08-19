@@ -3,6 +3,7 @@
 namespace Weboccult\LaravelAwsCloudWatchLogger\Drivers;
 
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
+use Illuminate\Support\Facades\Log;
 use Weboccult\LaravelAwsCloudWatchLogger\Contracts\Driver;
 use Maxbanton\Cwh\Handler\CloudWatch;
 use Monolog\Logger;
@@ -13,7 +14,7 @@ class CloudWatchDriver extends Driver
     protected array $settings;
     protected array $options;
     protected array $tags;
-    protected Logger $logger;
+    protected $logger;
 
     public function __construct(array $settings, array $options, array $tags = [])
     {
@@ -36,6 +37,7 @@ class CloudWatchDriver extends Driver
             return $logger;
         }
         catch (\Exception $e) {
+            Log::info('ERROR while connectng to cloudwatch'. PHP_EOL . '-------------------------------' .PHP_EOL . $e->getMessage() . PHP_EOL . '-------------------------------' . PHP_EOL);
             return false;
         }
     }
@@ -43,9 +45,9 @@ class CloudWatchDriver extends Driver
     /**
      * @return false|void
      */
-    public function dispatch(string $type, string $title)
+    public function dispatch(string $type, string $title): void
     {
-        if ($this->options['disabled'] == true) {
+        if ($this->options['disabled'] == true || $this->logger == false) {
             return;
         }
         try {
@@ -53,7 +55,7 @@ class CloudWatchDriver extends Driver
             $this->logger->$type($title, $payload);
         }
         catch (\Exception $e) {
-            return false;
+            return;
         }
     }
 }
