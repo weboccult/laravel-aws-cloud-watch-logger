@@ -7,12 +7,9 @@
 
 ---
 
-## Support me
+# Laravel Aws CloudWatch Logger
 
-[<img src="" width="419px" />](link)
-
-
-
+This package is capable to log all your activities and SQL queries to AWS Cloud Watch.
 
 ## Installation
 
@@ -22,22 +19,18 @@ You can install the package via composer:
 composer require weboccult/laravel-aws-cloud-watch-logger
 ```
 
-[comment]: <> (You can publish and run the migrations with:)
-
-[comment]: <> (```bash)
-
-[comment]: <> (php artisan vendor:publish --provider="Weboccult\LaravelAwsCloudwatchLogger\LaravelAwsCloudwatchLoggerServiceProvider" --tag="laravel-aws-cloud-watch-logger-migrations")
-
-[comment]: <> (php artisan migrate)
-
-[comment]: <> (```)
-
 You can publish the config file with:
+
 ```bash
 php artisan vendor:publish --provider="Weboccult\LaravelAwsCloudwatchLogger\LaravelAwsCloudwatchLoggerServiceProvider" --tag="laravel-aws-cloud-watch-logger-config"
 ```
+or
 
-This is the contents of the published config file:
+```php
+php artisan cloudwatch:publish
+```
+
+## This is the contents of the published config file:
 
 ```php
 return [
@@ -56,7 +49,7 @@ return [
     | List of Available Drivers
     |--------------------------------------------------------------------------
     |
-    | These are the list of drivers to use for this package.
+    | This is the list of drivers to use for this package.
     | You can change the name. Then you'll have to change
     | it in the map array too.
     |
@@ -69,7 +62,7 @@ return [
         'cloudwatch' => [
             'credential'          => [
                 /*
-                 * Set your aws cloudwatch region and cloudwatch SKD version here...
+                 * Set your AWS cloudwatch region and cloudwatch SKD version here...
                 */
                 'region'  => env('AWS_DEFAULT_REGION'),
                 'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
@@ -83,12 +76,12 @@ return [
             ],
             /*
              *  Set your log group name here...
-             *  by default it will take Eactcard-Production group.
+             *  by default it will take the Eactcard-Production group.
             */
             'log_group'           => env('CLOUDWATCH_LOG_GROUP', 'Eatcard-Production'),
             /*
              *  Set your log group stream here...
-             *  by default it will take daily new date (format : 20XX-XX-XX).
+             *  by default it will take a daily new date (format: 20XX-XX-XX).
             */
             'log_stream'          => env('CLOUDWATCH_LOG_STREAM', \Carbon\Carbon::now()->format('Y-m-d')),
             /*
@@ -99,7 +92,7 @@ return [
             /*
              *  Set your retention batchSize here...
              *  by default it will use 10000.
-             *  max batchSize is 10000, so you can not set value greater than 10000.
+             *  max batchSize is 10000, so you can not set a value greater than 10000.
             */
             'batch_size'          => env('CLOUDWATCH_LOG_BATCH_SIZE', null),
             /*
@@ -117,12 +110,12 @@ return [
     'options' => [
         /*
          *  Set your log group name here...
-         *  by default it will take Eactcard-Production group.
+         *  by default it will take the Eactcard-Production group.
         */
         'project_name' => env('PROJECT_NAME', env('APP_NAME', 'PROJECT_NAME_NOT_CONFIGURED')),
         /*
          * You can disable the logs here...
-         *  Note : If you set true value then all the drivers won't able to send/write the logs
+         *  Note: If you set true value then all the drivers won't able to send/write the logs
         */
         'disabled'     => env('DISABLE_CLOUDWATCH_LOG', false),
     ],
@@ -131,9 +124,9 @@ return [
     | Class Maps
     |--------------------------------------------------------------------------
     |
-    | This is the array of Classes that maps to Drivers above.
+    | This is the array of Classes that maps to the Drivers above.
     | You can create your own driver if you like and add the
-    | config in the drivers array and the class to use for
+    | config in the driver's array and the class to use for
     | here with the same name. You will have to extend
     | Weboccult\LaravelAwsCloudWatchLogger\Drivers in your driver.
     |
@@ -147,8 +140,9 @@ return [
 
 ## Usage
 
+Core PHP:
+
 ```php
-php :
 $laravelAwsCloudWatchLogger = new Weboccult\LaravelAwsCloudwatchLogger();
 echo $laravelAwsCloudWatchLogger->check();
 echo $laravelAwsCloudWatchLogger->setStore($store)
@@ -157,9 +151,13 @@ echo $laravelAwsCloudWatchLogger->setStore($store)
                                 ->setOperation(\Weboccult\LaravelAwsCloudWatchLogger\Types\Operations::CREATE)
                                 ->setData(["order_id" => 1])
                                 ->info();
+```
 
-laravel facade :
+Laravel Facade:
+
+```php
 use Weboccult\LaravelAwsCloudWatchLogger\Facades\LaravelAwsCloudWatchLogger;
+
 LaravelAwsCloudWatchLogger::check()
 LaravelAwsCloudWatchLogger::setStore($store)
                           ->setTitle('test')
@@ -168,8 +166,11 @@ LaravelAwsCloudWatchLogger::setStore($store)
                           ->setOperation(\Weboccult\LaravelAwsCloudWatchLogger\Types\Operations::CREATE)
                           ->setData(["order_id" => 1])
                           ->info();
+```
 
-laravel helper :
+Laravel Helper:
+
+```php
 laravelAwsCloudwatchLogger()->check()
 laravelAwsCloudwatchLogger()->setStore($store)
                             ->setTags(['test', 'any'])
@@ -183,7 +184,7 @@ laravelAwsCloudwatchLogger()->setStore($store)
 ## Testing
 
 ```bash
-composer test
+./vendor/bin/pest
 ```
 
 ## Changelog
