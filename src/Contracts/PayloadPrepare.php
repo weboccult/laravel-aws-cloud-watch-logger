@@ -12,10 +12,15 @@ trait PayloadPrepare
      */
     public function preparePayload(): array
     {
-        return [
+        $payload = [
             "project"   => $this->options['project_name'],
-            "storeId"   => $this->store->id,
-            "storeSlug" => $this->store->store_slug,
+        ];
+        if (isset($this->modelConfig['fields']) && !empty($this->modelConfig['fields']) && collect($this->modelConfig['fields'])->count() > 0) {
+            foreach ($this->modelConfig['fields'] as $key => $field) {
+                $payload[$key] = $this->model->$field;
+            }
+        }
+        $payloadData = [
             "module"    => $this->module,
             "operation" => $this->operation,
             "date"      => \Carbon\Carbon::now()->format('d-m-Y'),
@@ -34,5 +39,6 @@ trait PayloadPrepare
                 ]
             ]
         ];
+        return array_merge($payload,$payloadData);
     }
 }

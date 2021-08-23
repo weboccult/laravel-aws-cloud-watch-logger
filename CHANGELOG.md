@@ -2,6 +2,17 @@
 
 All notable changes to `laravel-aws-cloud-watch-logger` will be documented in this file
 
+## 2.0 - 2021-08-23
+
+- setStore() method is now deprecated in favor of setModel()
+- moduleConfig added so we can use generic models
+- Model class validation added
+- Model class reference is now optional, you can add root level field via cloudwatch config file.
+- validation added for default driver
+- auto-completion facade detection for setModel static definition added
+- driver's setter updated
+- cloudwatch.php validation added if not published
+
 ## 1.0 - 2021-08-19
 
 - file and cloudwatch drive is now ready to use

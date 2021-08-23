@@ -1,13 +1,21 @@
-# This package is capable to log all your activities and SQL queries to AWS Cloud Watch.
-
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/weboccult/laravel-aws-cloud-watch-logger.svg?style=flat-square)](https://packagist.org/packages/weboccult/laravel-aws-cloud-watch-logger)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/weboccult/laravel-aws-cloud-watch-logger/run-tests?label=tests)](https://github.com/weboccult/laravel-aws-cloud-watch-logger/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/weboccult/laravel-aws-cloud-watch-logger/Check%20&%20fix%20styling?label=code%20style)](https://github.com/weboccult/laravel-aws-cloud-watch-logger/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/weboccult/laravel-aws-cloud-watch-logger.svg?style=flat-square)](https://packagist.org/packages/weboccult/laravel-aws-cloud-watch-logger)
+<h6 align="center">
+    <img src="https://eatcard.s3.eu-central-1.amazonaws.com/WOT-Logo-2-(1280x640).png" width="250"/>
+</h6>
+<h2 align="center">
+    Laravel Aws CloudWatch Logger
+</h2>
+<br>
 
 ---
 
-# Laravel Aws CloudWatch Logger
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/weboccult/laravel-aws-cloud-watch-logger.svg?style=flat-square)](https://packagist.org/packages/weboccult/laravel-aws-cloud-watch-logger)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/weboccult/laravel-aws-cloud-watch-logger/run-tests?label=tests)](https://github.com/weboccult/laravel-aws-cloud-watch-logger/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/weboccult/laravel-aws-cloud-watch-logger.svg?style=flat-square)](https://packagist.org/packages/weboccult/laravel-aws-cloud-watch-logger)
+
+[comment]: <> ([![GitHub Code Style Action Status]&#40;https://img.shields.io/github/workflow/status/weboccult/laravel-aws-cloud-watch-logger/Check%20&%20fix%20styling?label=code%20style&#41;]&#40;https://github.com/weboccult/laravel-aws-cloud-watch-logger/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain&#41;)
+
+---
+
 
 This package is capable to log all your activities and SQL queries to AWS Cloud Watch.
 
@@ -48,10 +56,54 @@ return [
     'default' => 'file',
     /*
     |--------------------------------------------------------------------------
+    | Global options
+    |--------------------------------------------------------------------------
+    |
+    | These are the global option for this package and it will determine how the package will operate.
+    |
+    */
+    'options' => [
+        /*
+         * Set your log group name here...
+         * by default it will take Eactcard-Production group.
+        */
+        'project_name' => env('PROJECT_NAME', env('APP_NAME', 'PROJECT_NAME_NOT_CONFIGURED')),
+        /*
+         * You can disable the logs here...
+         * Note : If you set true value then all the drivers won't able to send/write the logs
+        */
+        'disabled'     => env('DISABLE_CLOUDWATCH_LOG', false),
+    ],
+    /*
+    |--------------------------------------------------------------------------
+    | Centric Model
+    |--------------------------------------------------------------------------
+    |
+    | This is centric model for this package and it will add the extra fields from a defined model
+    |
+    */
+    'model'   => [
+        /*
+         * Set your centric model here which will be used for root level fields
+         * by default it will take User Model you can change as per your project's database...
+         * Note : class is completely optional
+        */
+        'class'  => null, // App\Models\User::class,
+        /*
+         * Here you can define field which will be used by this package...
+         * Note : Fields are completely optional, If you do a defined field in the array,
+         *         then all the logs will be an extra fields in the root level of your JSON.
+        */
+        'fields' => [
+            // 'userId' => 'id',
+        ],
+    ],
+    /*
+    |--------------------------------------------------------------------------
     | List of Available Drivers
     |--------------------------------------------------------------------------
     |
-    | This is the list of drivers to use for this package.
+    | These are the list of drivers to use for this package.
     | You can change the name. Then you'll have to change
     | it in the map array too.
     |
@@ -64,7 +116,7 @@ return [
         'cloudwatch' => [
             'credential'          => [
                 /*
-                 * Set your AWS cloudwatch region and cloudwatch SKD version here...
+                 * Set your aws cloudwatch region and cloudwatch SKD version here...
                 */
                 'region'  => env('AWS_DEFAULT_REGION'),
                 'version' => env('CLOUDWATCH_LOG_VERSION', 'latest'),
@@ -77,58 +129,46 @@ return [
                 // token is optional
             ],
             /*
-             *  Set your log group name here...
-             *  by default it will take the Eactcard-Production group.
+             * Set your log group name here...
+             * by default it will take Eactcard-Production group.
             */
             'log_group'           => env('CLOUDWATCH_LOG_GROUP', 'Eatcard-Production'),
             /*
-             *  Set your log group stream here...
-             *  by default it will take a daily new date (format: 20XX-XX-XX).
+             * Set your log group stream here...
+             * By default it will take daily new date (format : 20XX-XX-XX).
             */
             'log_stream'          => env('CLOUDWATCH_LOG_STREAM', \Carbon\Carbon::now()->format('Y-m-d')),
             /*
-             *  Set your retention period here...
-             *  by default it will use null meaning no expiry date.
+             * Set your retention period here...
+             * By default it will use null meaning no expiry date.
             */
             'retention'           => env('CLOUDWATCH_LOG_RETENTION', null),
             /*
-             *  Set your retention batchSize here...
-             *  by default it will use 10000.
-             *  max batchSize is 10000, so you can not set a value greater than 10000.
+             * Set your retention batchSize here...
+             * By default it will use 10000.
+             * Max batchSize is 10000, so you can not set value greater than 10000.
             */
             'batch_size'          => env('CLOUDWATCH_LOG_BATCH_SIZE', null),
             /*
-             *  Set your log level here...
-             *  @see \Monolog\Logger:class
+             * Set your log level here...
+             * @see \Monolog\Logger:class
             */
             'log_level'           => \Monolog\Logger::DEBUG,
             /*
-             *  Set your log format here...
+             * Set your log format here...
             */
             'formatter'           => \Monolog\Formatter\JsonFormatter::class,
             'logFormatterPattern' => '%channel%: %level_name%: %message% %context% %extra%',
         ]
-    ],
-    'options' => [
-        /*
-         *  Set your log group name here...
-         *  by default it will take the Eactcard-Production group.
-        */
-        'project_name' => env('PROJECT_NAME', env('APP_NAME', 'PROJECT_NAME_NOT_CONFIGURED')),
-        /*
-         * You can disable the logs here...
-         *  Note: If you set true value then all the drivers won't able to send/write the logs
-        */
-        'disabled'     => env('DISABLE_CLOUDWATCH_LOG', false),
     ],
     /*
     |--------------------------------------------------------------------------
     | Class Maps
     |--------------------------------------------------------------------------
     |
-    | This is the array of Classes that maps to the Drivers above.
+    | This is the array of Classes that maps to Drivers above.
     | You can create your own driver if you like and add the
-    | config in the driver's array and the class to use for
+    | config in the drivers array and the class to use for
     | here with the same name. You will have to extend
     | Weboccult\LaravelAwsCloudWatchLogger\Drivers in your driver.
     |

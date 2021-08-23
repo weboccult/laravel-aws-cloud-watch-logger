@@ -2,6 +2,7 @@
 
 namespace Weboccult\LaravelAwsCloudWatchLogger\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Weboccult\LaravelAwsCloudWatchLogger\Contracts\Driver;
 use ReflectionClass;
 /**
@@ -28,9 +29,18 @@ trait Validators
         if (empty($data)) {
             return false;
         }
-        $conditions = [
-            'store is required.!' => empty($this->store),
-        ];
+
+        $conditions = [];
+        if (
+            isset($this->config['model']['class']) &&
+            !empty($this->config['model']['class'])
+        ) {
+            if ($this->config['model']['class'] instanceof Model) {
+                $conditions[] = [
+                    'Model must be an instance of Illuminate\Database\Eloquent\Model class.' => !($this->model instanceof Model),
+                ];
+            }
+        }
         foreach ($conditions as $ex => $condition) {
             throw_if($condition, new \Exception($ex));
         }

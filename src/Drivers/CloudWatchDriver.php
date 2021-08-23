@@ -13,13 +13,15 @@ class CloudWatchDriver extends Driver
 
     protected array $settings;
     protected array $options;
+    protected array $modelConfig;
     protected array $tags;
     protected $logger;
 
-    public function __construct(array $settings, array $options, array $tags = [])
+    public function __construct(array $settings, array $options, array $modelConfig, array $tags = [])
     {
         $this->settings = $settings;
         $this->options = $options;
+        $this->modelConfig = $modelConfig;
         $this->tags = $tags;
         $this->logger = $this->getLogger();
     }

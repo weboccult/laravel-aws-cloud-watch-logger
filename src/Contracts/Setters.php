@@ -19,9 +19,9 @@ trait Setters
         $this->data = $data;
     }
 
-    public function setStore(Model $store)
+    public function setModel(Model $model)
     {
-        $this->store = $store;
+        $this->model = $model;
     }
 
     public function setModule(string $module)

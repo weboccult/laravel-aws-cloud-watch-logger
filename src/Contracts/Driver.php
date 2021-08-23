@@ -20,7 +20,7 @@ abstract class Driver
 
     protected array $data;
 
-    protected Model $store;
+    protected Model $model;
 
     protected string $operation;
 

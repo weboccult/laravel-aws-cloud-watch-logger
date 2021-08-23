@@ -27,7 +27,7 @@ class LaravelAwsCloudWatchLogger
 
     protected array $data = [];
 
-    protected Model $store;
+    protected Model $model;
 
     protected string $module;
 
@@ -36,6 +36,9 @@ class LaravelAwsCloudWatchLogger
     public function __construct()
     {
         $this->config = config('cloudwatch');
+        if (!file_exists(config_path('cloudwatch.php'))) {
+            throw new \Exception('cloudwatch.php not found in config folder you need publish it first.!');
+        }
         $this->via($this->config['default']);
     }
 
@@ -46,7 +49,11 @@ class LaravelAwsCloudWatchLogger
     public function via(string $driver): LaravelAwsCloudWatchLogger
     {
         $this->driver = $driver;
-        $this->settings = $this->config['drivers'][$driver];
+        if (isset($this->config['default']) && !empty($this->config['default']) && isset($this->config['drivers'][$driver])) {
+            $this->settings = $this->config['drivers'][$driver];
+        } else {
+            throw new \InvalidArgumentException('Default driver is invalid.!');
+        }
         return $this;
     }
 
@@ -145,12 +152,12 @@ class LaravelAwsCloudWatchLogger
      * @throws \Exception
      * @throws \Throwable
      */
-    public function setStore($store): LaravelAwsCloudWatchLogger
+    public function setModel($model): LaravelAwsCloudWatchLogger
     {
-        if (!$store instanceof Model) {
-            throw new \Exception('title can not be empty');
+        if (!$model instanceof Model) {
+            throw new \Exception('Model must me an instance of Illuminate\Database\Eloquent\Model');
         }
-        $this->store = $store;
+        $this->model = $model;
         return $this;
     }
 
@@ -183,7 +190,7 @@ class LaravelAwsCloudWatchLogger
     {
         $this->validateDriver();
         $class = $this->config['map'][$this->driver];
-        return new $class($this->settings, $this->config['options'], $this->tags);
+        return new $class($this->settings, $this->config['options'], $this->config['model'], $this->tags);
     }
 
     /**
@@ -194,17 +201,25 @@ class LaravelAwsCloudWatchLogger
         $conditions = [
             'Module can not be empty.'                  => empty($this->module),
             'Operation can not be empty.'               => empty($this->operation),
-            'Store can not be empty.'                   => empty($this->store),
             'Data can not be empty.'                    => empty($this->data),
-            'Store must be an instance of Model class.' => !($this->store instanceof Model),
         ];
+        if (
+            isset($this->config['model']['class']) &&
+            !empty($this->config['model']['class'])
+        ) {
+            if ($this->config['model']['class'] instanceof Model) {
+                $condition[] = [
+                    'Model must be an instance of Illuminate\Database\Eloquent\Model class.' => !($this->model instanceof Model),
+                ];
+            }
+        }
         foreach ($conditions as $ex => $condition) {
             throw_if($condition, new \Exception($ex));
         }
         $driver = $this->getDriverInstance();
         $driver->setTitle($this->title);
         $driver->setData($this->data);
-        $driver->setStore($this->store);
+        $driver->setModel($this->model);
         $driver->setModule($this->module);
         $driver->setOperation($this->operation);
         return $driver->dispatch($type, $this->title);
