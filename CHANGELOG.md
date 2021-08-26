@@ -2,6 +2,7 @@
 
 All notable changes to `laravel-aws-cloud-watch-logger` will be documented in this file
 
+
 ## 3.0 - 2021-08-26
 
 - silent wrapper added
