@@ -21,26 +21,19 @@ This package is capable to log all your activities and SQL queries to AWS Cloud 
 
 ## Installation
 
-You can install the package via composer:
+#### You can install the package via composer:
 
 ```bash
 composer require weboccult/laravel-aws-cloud-watch-logger
 ```
 
-You can publish the config file with:
+#### You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --provider="Weboccult\LaravelAwsCloudwatchLogger\LaravelAwsCloudwatchLoggerServiceProvider" --tag="laravel-aws-cloud-watch-logger-config"
-or
-php artisan cloudwatch:publish
-```
-or
-
-```php
 php artisan cloudwatch:publish
 ```
 
-## This is the contents of the published config file:
+#### This is the contents of the published config file:
 
 ```php
 return [
@@ -182,7 +175,7 @@ return [
 
 ## Usage
 
-Core PHP:
+#### Core PHP:
 
 ```php
 $laravelAwsCloudWatchLogger = new Weboccult\LaravelAwsCloudwatchLogger();
@@ -195,7 +188,7 @@ echo $laravelAwsCloudWatchLogger->setStore($store)
                                 ->info();
 ```
 
-Laravel Facade:
+#### Laravel Facade:
 
 ```php
 use Weboccult\LaravelAwsCloudWatchLogger\Facades\LaravelAwsCloudWatchLogger;
@@ -210,7 +203,7 @@ LaravelAwsCloudWatchLogger::setStore($store)
                           ->info();
 ```
 
-Laravel Helper:
+#### Laravel Helper:
 
 ```php
 laravelAwsCloudwatchLogger()->check()
@@ -223,13 +216,41 @@ laravelAwsCloudwatchLogger()->setStore($store)
                             ->info();
 ```
 
-You can change the log driver at runtime:
+#### You can change the log driver at runtime:
 
 ```php
 laravelAwsCloudwatchLogger()->via('file') // <=== using via() method (available drivers [ file, cloudwatch] )
                             ->...
                             ->...
                             ->info();
+```
+
+#### Silent Logger:
+
+It will not throw any error, just put file log if anything goes wrong.
+
+```php
+laravelAwsCloudWatchLoggerSilent(function () {
+            laravelAwsCloudwatchLogger()
+                    ->setTitle('test')
+                    ->setModule(\Weboccult\LaravelAwsCloudWatchLogger\Types\Modules::ORDER)
+                    ->setLogLevel('error')
+                    ->setTags(['error'])
+                    ->setOperation(\Weboccult\LaravelAwsCloudWatchLogger\Types\Operations::CREATE)
+                    ->setData(["order_id" => 1])
+                    ->info();
+    });
+```
+
+#### Inline Logger:
+
+It will same as Silent Logger, but with compact syntax.
+
+```php
+use \Weboccult\LaravelAwsCloudWatchLogger\Types\Modules;
+use \Weboccult\LaravelAwsCloudWatchLogger\Types\Operations
+
+laravelAwsCloudWatchLoggerInline('info', 'test', ["order_id" => 1], Modules::ORDER, Operations::CREATE, null, ['tag1', 'tag2'] );
 ```
 
 ## Testing
