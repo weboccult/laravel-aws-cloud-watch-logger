@@ -27,7 +27,7 @@ class LaravelAwsCloudWatchLogger
 
     protected array $data = [];
 
-    protected Model $model;
+    protected $model = null;
 
     protected string $module;
 
@@ -58,17 +58,26 @@ class LaravelAwsCloudWatchLogger
     }
 
     /**
-     * @param int $level
+     * @param int|string $level
      * @return $this
      */
-    public function setLogLevel(int $level): LaravelAwsCloudWatchLogger
+    public function setLogLevel($level): LaravelAwsCloudWatchLogger
     {
         $reflect = new ReflectionClass(Logger::class);
-        if (!isset(array_flip($reflect->getConstants())[$level])) {
-            throw new \Exception('LogLevel must be an constant of \Monolog\Logger::class.');
+        if ($this->config['default'] == 'cloudwatch') {
+            if (!isset(array_flip($reflect->getConstants())[$level])) {
+                throw new \Exception('LogLevel must be an constant of \Monolog\Logger::class.');
+            }
+            $constName = array_flip($reflect->getConstants())[$level];
+            $this->settings['log_level'] = $reflect->getConstant($constName);
         }
-        $constName = array_flip($reflect->getConstants())[$level];
-        $this->settings['log_level'] = $reflect->getConstant($constName);
+        if ($this->config['default'] == 'file') {
+            $supportedLogLevels = ['alert','critical','debug','emergency','error','info','log','notice','warning','write'];
+            if (!in_array($level, $supportedLogLevels)) {
+                throw new \Exception('LogLevel must be an one of [].');
+            }
+            $this->settings['log_level'] = $level;
+        }
         return $this;
     }
 
@@ -207,10 +216,14 @@ class LaravelAwsCloudWatchLogger
             isset($this->config['model']['class']) &&
             !empty($this->config['model']['class'])
         ) {
+            $conditions = array_merge( $conditions, [
+                'Model is required as you have defined in cloudwatch config file.' => empty($this->model),
+            ],);
             if ($this->config['model']['class'] instanceof Model) {
-                $condition[] = [
+                $conditions = array_merge( $conditions, [
                     'Model must be an instance of Illuminate\Database\Eloquent\Model class.' => !($this->model instanceof Model),
-                ];
+                    'Model is required as you have defined in cloudwatch config file.' => empty($this->model),
+                ]);
             }
         }
         foreach ($conditions as $ex => $condition) {
@@ -219,7 +232,7 @@ class LaravelAwsCloudWatchLogger
         $driver = $this->getDriverInstance();
         $driver->setTitle($this->title);
         $driver->setData($this->data);
-        $driver->setModel($this->model);
+        $driver->setModel($this->config['model']['class']);
         $driver->setModule($this->module);
         $driver->setOperation($this->operation);
         return $driver->dispatch($type, $this->title);

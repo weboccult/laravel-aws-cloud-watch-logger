@@ -27,6 +27,7 @@ trait PayloadPrepare
             "time"      => \Carbon\Carbon::now()->format('H:i:s'),
             "payload"   => [
                 "data"   => $this->data,
+                "tags"   => $this->tags,
                 "before" => [],
                 "after"  => [],
                 "extra"  => [

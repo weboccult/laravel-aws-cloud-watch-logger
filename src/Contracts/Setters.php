@@ -2,8 +2,6 @@
 
 namespace Weboccult\LaravelAwsCloudWatchLogger\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
  * helper method for Driver class
  */
@@ -19,7 +17,10 @@ trait Setters
         $this->data = $data;
     }
 
-    public function setModel(Model $model)
+    /**
+     * @param $model
+     */
+    public function setModel($model)
     {
         $this->model = $model;
     }

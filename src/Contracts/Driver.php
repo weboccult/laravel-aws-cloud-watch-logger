@@ -2,8 +2,6 @@
 
 namespace Weboccult\LaravelAwsCloudWatchLogger\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
-
 abstract class Driver
 {
     use Setters, PayloadPrepare;
@@ -20,7 +18,7 @@ abstract class Driver
 
     protected array $data;
 
-    protected Model $model;
+    protected $model;
 
     protected string $operation;
 
