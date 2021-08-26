@@ -2,6 +2,12 @@
 
 All notable changes to `laravel-aws-cloud-watch-logger` will be documented in this file
 
+## 3.0 - 2021-08-26
+
+- silent wrapper added
+- inline method added
+- tags support added
+
 ## 2.0 - 2021-08-23
 
 - setStore() method is now deprecated in favor of setModel()
